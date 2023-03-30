@@ -1,0 +1,399 @@
+Listagem 1. Arquivo pom.xml
+
+
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0
+  http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>br.com.cazuzaneto</groupId>
+  <artifactId>spring-jpa</artifactId>
+  <version>0.0.1-SNAPSHOT</version>
+  <name>spring-jpa</name>
+  <dependencies>
+        <dependency>
+              <groupId>org.springframework</groupId>
+              <artifactId>spring-context</artifactId>
+              <version>4.2.4.RELEASE</version>
+        </dependency>
+        <dependency>
+              <groupId>org.springframework</groupId>
+              <artifactId>spring-tx</artifactId>
+              <version>4.2.4.RELEASE</version>
+        </dependency>
+        <dependency>
+              <groupId>org.springframework</groupId>
+              <artifactId>spring-orm</artifactId>
+              <version>4.2.4.RELEASE</version>
+        </dependency>
+        <dependency>
+              <groupId>org.springframework</groupId>
+              <artifactId>spring-aop</artifactId>
+              <version>4.2.4.RELEASE</version>
+        </dependency>
+        <dependency>
+              <groupId>org.hibernate</groupId>
+              <artifactId>hibernate-entitymanager</artifactId>
+              <version>4.1.6.Final</version>
+        </dependency>
+        <dependency>
+              <groupId>org.springframework</groupId>
+              <artifactId>spring-beans</artifactId>
+              <version>4.2.4.RELEASE</version>
+        </dependency>
+        <dependency>
+              <groupId>org.apache.commons</groupId>
+              <artifactId>commons-dbcp2</artifactId>
+              <version>2.1.1</version>
+        </dependency>
+        <dependency>
+              <groupId>mysql</groupId>
+              <artifactId>mysql-connector-java</artifactId>
+              <version>5.1.38</version>
+        </dependency>
+  </dependencies>
+  <build>
+    <plugins>
+      <plugin>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <version>3.3</version>
+        <configuration>
+          <source>1.8</source>
+          <target>1.8</target>
+        </configuration>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-jar-plugin</artifactId>
+        <configuration>
+          <archive>
+           <manifest>
+             <mainClass>br.com.cazuzaneto.run.Run</mainClass>
+           </manifest>
+          </archive>
+        </configuration>
+      </plugin>
+
+    </plugins>
+  </build>
+</project>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Listagem 2. Arquivo spring-context.xml
+
+
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:context="http://www.springframework.org/schema/context"
+    xmlns:tx="http://www.springframework.org/schema/tx"
+    xsi:schemaLocation="
+      http://www.springframework.org/schema/beans
+      http://www.springframework.org/schema/beans/spring-beans.xsd
+      http://www.springframework.org/schema/context
+      http://www.springframework.org/schema/context/spring-context.xsd
+      http://www.springframework.org/schema/tx
+      http://www.springframework.org/schema/tx/spring-tx.xsd">
+
+    <!-- Contexto do DispatcherServlet:
+    define a infraestrutura
+    do processamento das requisições feitas
+    ao Servlet (DispatcherServlet) -->
+
+    <bean id="entityManagerFactory"
+          class="org.springframework.orm.jpa
+          .LocalContainerEntityManagerFactoryBean">
+          <property name="persistenceUnitName" value="DEVMEDIA-UP" />
+          <property name="dataSource" ref="mysqlDataSource" />
+          <property name="jpaVendorAdapter">
+    <bean class="org.springframework.orm.jpa.vendor
+    .HibernateJpaVendorAdapter" />
+          </property>
+    </bean>
+    <bean id="mysqlDataSource" class="org.apache.commons.dbcp2
+    .BasicDataSource">
+          <property name="driverClassName" value="com.mysql
+          .jdbc.Driver" />
+          <property name="url"
+                value="jdbc:mysql://localhost/alunodb?
+                createDatabaseIfNotExist=true" />
+          <property name="username" value="root" />
+          <property name="password" value="123456" />
+    </bean>
+    <bean id="transactionManager" class="org.springframework.orm
+    .jpa.JpaTransactionManager">
+          <property name="entityManagerFactory"
+          ref="entityManagerFactory" />
+    </bean>
+    <tx:annotation-driven />
+
+    <!-- Define o pacote base para o escaneamento das anotações de
+    contexto (@Component, @Repository, @Service, @Controller, etc) -->
+    <context:component-scan base-package="br.com.cazuzaneto" />
+    <context:annotation-config />
+
+</beans>
+
+
+
+
+Listagem 3. Classe AlunoEntity
+
+
+package br.com.cazuzaneto.model;
+import java.util.Calendar;
+
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.Table;
+
+@Entity
+@Table(name = "aluno")
+public class AlunoEntity {
+
+      @Id
+      @GeneratedValue
+      private Long id;
+
+      @Column(name = "nome")
+      private String nome;
+      @Column(name = "matricula")
+      private String matricula;
+      @Column(name = "data_nascimento")
+      private Calendar dataNascimento;
+      @Column(name = "sexo")
+      private String sexo;
+
+      public Long getId() {
+            return id;
+      }
+
+      public void setId(Long id) {
+            this.id = id;
+      }
+
+      public String getNome() {
+            return nome;
+      }
+
+      public void setNome(String nome) {
+            this.nome = nome;
+      }
+
+      public Calendar getDataNascimento() {
+            return dataNascimento;
+      }
+
+      public void setDataNascimento(Calendar dataNascimento) {
+            this.dataNascimento = dataNascimento;
+      }
+
+      public String getSexo() {
+            return sexo;
+      }
+
+      public void setSexo(String sexo) {
+            this.sexo = sexo;
+      }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Listagem 4. Arquivo persistence.xml
+
+
+<?xml version="1.0" encoding="UTF-8"?>
+<persistence version="2.1"
+      xmlns="http://xmlns.jcp.org/xml/ns/persistence"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/persistence
+      http://xmlns.jcp.org/xml/ns/persistence/persistence_2_1.xsd">
+      <persistence-unit name="DEVMEDIA-UP" transaction-type="RESOURCE_LOCAL">
+            <provider>org.hibernate.ejb.HibernatePersistence</provider>
+            <class>br.com.cazuzaneto.model.AlunoEntity</class>
+
+            <properties>
+             <!-- SEM as propriedades URL, login, senha e driver -->
+                  <property name="hibernate.dialect" value="org
+                  .hibernate.dialect.MySQL5InnoDBDialect" />
+                  <property name="hibernate.show_sql" value="true" />
+                  <property name="hibernate.format_sql" value="true" />
+                  <property name="hibernate.hbm2ddl.auto" value="update" />
+            </properties>
+      </persistence-unit>
+</persistence>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Listagem 5. Classe AlunoPersistence
+
+
+package br.com.cazuzaneto.persistence;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+
+import org.springframework.stereotype.Repository;
+
+import br.com.cazuzaneto.model.AlunoEntity;
+
+@Repository
+public class AlunoPersistence {
+
+      @PersistenceContext
+      private EntityManager entityManager;
+
+      public void persistir(AlunoEntity entity) {
+            this.entityManager.persist(entity);
+      }
+
+      public AlunoEntity buscar(Long id) {
+            return this.entityManager.find(AlunoEntity.class, id);
+      }
+
+      public void remover(AlunoEntity alunoEntity) {
+            this.entityManager.remove(alunoEntity);
+      }
+
+      public void atualizar(AlunoEntity alunoEntity){
+            this.entityManager.merge(alunoEntity);
+      }
+
+}
+
+
+
+
+
+
+
+
+
+Listagem 6. Classe AlunoBusiness
+
+package br.com.cazuzaneto.business;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import br.com.cazuzaneto.model.AlunoEntity;
+import br.com.cazuzaneto.persistence.AlunoPersistence;
+
+@Transactional
+@Service
+public class AlunoBusiness {
+
+      @Autowired
+      private AlunoPersistence alunoPersistence;
+
+      public void persistirAluno(AlunoEntity entity) {
+            this.alunoPersistence.persistir(entity);
+      }
+
+      public AlunoEntity buscarAluno(Long id) {
+            return this.alunoPersistence.buscar(id);
+      }
+
+      public void removerAluno(Long id) {
+            AlunoEntity aux = this.buscarAluno(id);
+            this.alunoPersistence.remover(aux);
+      }
+
+      public void atualizarAluno(AlunoEntity alunoEntity) {
+            this.alunoPersistence.atualizar(alunoEntity);
+      }
+}
+
+
+
+
+
+
+
+
+
+
+
+Listagem 7. Classe Run
+
+
+package br.com.cazuzaneto.run;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
+
+import br.com.cazuzaneto.business.AlunoBusiness;
+import br.com.cazuzaneto.model.AlunoEntity;
+
+public class Run {
+
+      private static AlunoBusiness alunoBusiness;
+      private static ApplicationContext context;
+
+      public static void main(String[] args) {
+            context = new ClassPathXmlApplicationContext("spring-context.xml");
+            alunoBusiness = context.getBean(AlunoBusiness.class);
+            alunoBusiness.persistirAluno(new AlunoEntity());
+      }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
